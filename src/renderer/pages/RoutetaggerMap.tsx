@@ -1,34 +1,35 @@
 import * as React from 'react';
-import { Map, Marker, TileLayer, Popup } from 'react-leaflet';
+import { Map, Marker, TileLayer, Popup, Polyline } from 'react-leaflet';
 import { divIcon } from 'leaflet';
-import { LatLon } from '../store/actions';
+import { LatLng } from '../store/actions';
 
 export interface RoutetaggerMapProps {
-    position: Position;
+    position: LatLng;
     zoom: number;
     sensors: Sensor[];
     selectedSensorId?: string;
 
     sensorSelected(sensorId: string): void;
     sensorUnselected(): void;
-    sensorWaypointAdded(sensorId: string, position: LatLon): void;
-    sensorWaypointMoved(sensorId: string, index: number, position: LatLon): void;
+    sensorPathUpdate(sensorId: string, path: LatLng[]): void;
 }
 
 interface Sensor {
     id: string;
     description: string;
-    position: Position;
-    waypoints: Position[];
+    position: LatLng;
+    waypoints: LatLng[];
+    pathGeometry: LatLng[];
 }
-
-type Position = [number, number];
 
 export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
     <Map
         center={props.position}
         zoom={props.zoom}
-        onclick={props.selectedSensorId && ((event) => props.sensorWaypointAdded(props.selectedSensorId!, {lat: event.latlng.lat, lon: event.latlng.lng})) || undefined}
+        onclick={props.selectedSensorId && ((event) => props.sensorPathUpdate(
+            props.selectedSensorId!,
+            props.sensors.find(x => x.id === props.selectedSensorId)!.waypoints.concat({lat: event.latlng.lat, lng: event.latlng.lng})
+            )) || undefined}
     >
         <TileLayer
             url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -46,13 +47,21 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
             >
                 <Popup>{sensor.id} {sensor.description}</Popup>
             </Marker>,
+            // sensor.pathGeometry.length > 1 ? <Polyline
+            //     key={sensor.id + 'line'}
+            //     positions={[]}
+            // /> : undefined,
             sensor.id === props.selectedSensorId ? sensor.waypoints.map((pos, index) => (
                 <Marker
                     icon={getWaypointIcon((index + 1).toString())}
                     key={sensor.id + '.' + index}
                     position={pos}
                     draggable={true}
-                    ondragend={(event) => props.sensorWaypointMoved(sensor.id, index, getLatLon(event.target.getLatLng()))}
+                    // ondragend={(event) => props.sensorWaypointMoved(sensor.id, index, getLatLon(event.target.getLatLng()))}
+                    ondragend={(event) => props.sensorPathUpdate(
+                        sensor.id,
+                        sensor.waypoints.map((way, i) => i === index ? getLatLon(event.target.getLatLng()) : way)
+                    )}
                     keyboard={false}
                 />
             )) : undefined,
@@ -63,7 +72,7 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
 function getLatLon({lat, lng}: any) {
     return {
         lat,
-        lon: lng,
+        lng,
     };
 }
 

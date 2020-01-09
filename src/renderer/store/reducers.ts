@@ -1,4 +1,4 @@
-import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED, SENSOR_SELECTED, SENSOR_UNSELECTED, SENSOR_WAYPOINT_PUSHED, SENSOR_WAYPOINT_POPPED, SENSOR_WAYPOINT_MOVED } from './actions';
+import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED, SENSOR_SELECTED, SENSOR_UNSELECTED, SENSOR_PATH_UPDATE, SENSOR_GEOMETRY_UPDATE } from './actions';
 
 export interface FileState {
     loadedFilename?: string;
@@ -49,43 +49,28 @@ export function reduceFile(state = initialFileState, action: Action): FileState 
             selectedSensorId: undefined,
         };
     }
-    if (action.type === SENSOR_WAYPOINT_PUSHED) {
-        const { sensorId, location } = action.payload;
+    if (action.type === SENSOR_PATH_UPDATE) {
+        const { sensorId, path } = action.payload;
         return {
             ...state,
             sensors: {
                 ...state.sensors,
                 [sensorId]: {
                     ...state.sensors[sensorId],
-                    waypoints: [...state.sensors[sensorId].waypoints, location],
+                    waypoints: path,
                 },
             },
         };
     }
-    if (action.type === SENSOR_WAYPOINT_POPPED) {
-        const { sensorId } = action.payload;
-        const oldWaypoints = state.sensors[sensorId].waypoints;
+    if (action.type === SENSOR_GEOMETRY_UPDATE) {
+        const { sensorId, geometry } = action.payload;
         return {
             ...state,
             sensors: {
                 ...state.sensors,
                 [sensorId]: {
                     ...state.sensors[sensorId],
-                    waypoints: oldWaypoints.slice(0, oldWaypoints.length - 1),
-                },
-            },
-        };
-    }
-    if (action.type === SENSOR_WAYPOINT_MOVED) {
-        const { sensorId } = action.payload;
-        const oldWaypoints = state.sensors[sensorId].waypoints;
-        return {
-            ...state,
-            sensors: {
-                ...state.sensors,
-                [sensorId]: {
-                    ...state.sensors[sensorId],
-                    waypoints: oldWaypoints.map((waypoint, index) => index === action.payload.waypointIndex ? action.payload.location : waypoint),
+                    pathGeometry: geometry,
                 },
             },
         };

@@ -3,20 +3,20 @@ export const FILE_LOADED = 'FILE_LOADED';
 export const FILE_FAILED = 'FILE_FAILED';
 export const SENSOR_SELECTED = 'SENSOR_SELECTED';
 export const SENSOR_UNSELECTED = 'SENSOR_UNSELECTED';
-export const SENSOR_WAYPOINT_PUSHED = 'SENSOR_WAYPOINT_PUSHED';
-export const SENSOR_WAYPOINT_POPPED = 'SENSOR_WAYPOINT_POPPED';
-export const SENSOR_WAYPOINT_MOVED = 'SENSOR_WAYPOINT_MOVED';
+export const SENSOR_PATH_UPDATE = 'SENSOR_PATH_UPDATE';
+export const SENSOR_GEOMETRY_UPDATE = 'SENSOR_GEOMETRY_UPDATE';
 
 export interface Sensor {
     id: string;
     description: string;
-    position: LatLon;
-    waypoints: LatLon[];
+    position: LatLng;
+    waypoints: LatLng[];
+    pathGeometry: LatLng[];
 }
 
-export interface LatLon {
+export interface LatLng {
     lat: number;
-    lon: number;
+    lng: number;
 }
 
 export function selectFile(filename: string): Action {
@@ -54,24 +54,17 @@ export function unselectSensor(): Action {
     };
 }
 
-export function popSensorWaypoint(sensorId: string): Action {
+export function updateSensorPath(sensorId: string, path: LatLng[]): Action {
     return {
-        type: SENSOR_WAYPOINT_POPPED,
-        payload: { sensorId },
+        type: SENSOR_PATH_UPDATE,
+        payload: { sensorId, path },
     };
 }
 
-export function pushSensorWaypoint(sensorId: string, location: LatLon): Action {
+export function updateSensorGeometry(sensorId: string, geometry: LatLng[]) : Action {
     return {
-        type: SENSOR_WAYPOINT_PUSHED,
-        payload: { sensorId, location },
-    };
-}
-
-export function moveSensorWaypoint(sensorId: string, waypointIndex: number, location: LatLon): Action {
-    return {
-        type: SENSOR_WAYPOINT_MOVED,
-        payload: { sensorId, waypointIndex, location },
+        type: SENSOR_GEOMETRY_UPDATE,
+        payload: { sensorId, geometry },
     };
 }
 
@@ -91,18 +84,14 @@ interface PayloadMap {
         sensorId: string;
     };
     [SENSOR_UNSELECTED]: null;
-    [SENSOR_WAYPOINT_POPPED]: {
+    [SENSOR_PATH_UPDATE]: {
         sensorId: string;
+        path: LatLng[];
     };
-    [SENSOR_WAYPOINT_PUSHED]: {
+    [SENSOR_GEOMETRY_UPDATE]: {
         sensorId: string;
-        location: LatLon;
+        geometry: LatLng[];
     };
-    [SENSOR_WAYPOINT_MOVED]: {
-        sensorId: string;
-        waypointIndex: number;
-        location: LatLon;
-    }
 }
 export type Action = ActionsOfPayloads<PayloadMap>
 

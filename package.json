@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@types/react-leaflet": "^2.5.0",
+    "axios": "^0.19.1",
     "csv-parser": "^2.3.2",
     "leaflet": "^1.6.0",
     "leaflet-routing-machine": "^3.2.12",
