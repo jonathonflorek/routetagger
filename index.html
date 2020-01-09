@@ -4,9 +4,13 @@
         <title>Routetagger</title>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
     </head>
-    <div>
-        Hello Electron
+    <body>
+        <div id='root'></div>
+
+        <!-- fix for 'exports not defined' error on startup -->
         <script>var exports = {};</script>
+
+        <!-- application entry point -->
         <script src="dist/renderer/index.js"></script>
-    </div>
+    </body>
 </html>
