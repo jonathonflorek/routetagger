@@ -28,11 +28,12 @@ export const RoutetaggerMap = (props: MapProps) => (
         />
         {props.sensors.map(sensor => (
             <Marker
-                icon={getPinIcon('default')}
+                icon={getPinIcon(sensor.id === props.selectedSensorId ? 'done' : 'default')}
                 key={sensor.id}
                 position={sensor.position}
                 keyboard={true}
                 riseOnHover={true}
+                onclick={() => props.sensorSelected(sensor.id)}
             >
                 <Popup>{sensor.id} {sensor.description}</Popup>
             </Marker>
