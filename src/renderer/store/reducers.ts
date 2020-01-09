@@ -39,8 +39,10 @@ export function reduceFile(state = initialFileState, action: Action): FileState 
     return state;
 }
 
-function index<T>(items: T[], key: keyof T): {[key: string]: T} {
+function index<T>(items: T[], key: keyof T) {
     return items.reduce((map, value) => {
-        map[value[key]] = value;
-    }, {} as any);
+        const id = String(value[key]);
+        map[id] = value;
+        return map;
+    }, {} as {[key: string]: T});
 }

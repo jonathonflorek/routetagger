@@ -22,7 +22,7 @@ export const RoutetaggerMap = (props: MapProps) => (
             attribution='&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors'
         />
         {props.sensors.map(sensor => (
-            <Marker position={sensor.position}>
+            <Marker key={sensor.id} position={sensor.position}>
                 <Popup>{sensor.id} {sensor.description}</Popup>
             </Marker>
         ))}
