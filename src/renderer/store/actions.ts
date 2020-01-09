@@ -26,7 +26,7 @@ export function loadFile(filename: string, sensors: Sensor[]): Action {
     };
 }
 
-export interface ActionPayloads {
+interface PayloadMap {
     [FILE_SELECTED]: {
         filename: string;
     };
@@ -35,7 +35,11 @@ export interface ActionPayloads {
         sensors: Sensor[];
     }
 }
-export type Action = { [K in keyof ActionPayloads]: {
-    type: K;
-    payload: ActionPayloads[K];
-} }[keyof ActionPayloads];
+export type Action = ActionsOfPayloads<PayloadMap>
+
+export type ActionsOfPayloads<TPayloadMap extends {[key: string]: any}> = {
+    [K in keyof TPayloadMap]: {
+        type: K;
+        payload: TPayloadMap[K];
+    }
+}[keyof TPayloadMap];
