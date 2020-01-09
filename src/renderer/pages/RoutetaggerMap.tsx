@@ -47,10 +47,10 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
             >
                 <Popup>{sensor.id} {sensor.description}</Popup>
             </Marker>,
-            // sensor.pathGeometry.length > 1 ? <Polyline
-            //     key={sensor.id + 'line'}
-            //     positions={[]}
-            // /> : undefined,
+            sensor.pathGeometry.length > 1 ? <Polyline
+                key={sensor.id + 'line'}
+                positions={sensor.pathGeometry}
+            /> : undefined,
             sensor.id === props.selectedSensorId ? sensor.waypoints.map((pos, index) => (
                 <Marker
                     icon={getWaypointIcon((index + 1).toString())}

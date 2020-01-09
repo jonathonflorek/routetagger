@@ -41,17 +41,17 @@ const store = createStore(
                 next(loadFileFailed(action.payload.filename, ex.message));
             }
         }
-        // if (action.type === SENSOR_PATH_UPDATE && action.payload.path.length > 1) {
-        //     const { path, sensorId } = action.payload;
-        //     const result = await axios.get(`http://router.project-osrm.org/route/v1/driving/${path.map(way => `${way.lon},${way.lat}`).join(';')}?geometries=geojson`);
-        //     try {
-        //         const geometry = (result.data.routes[0].geometry.coordinates as any[]).map(([lon,lat]: [number,number]) => ({lon,lat}));
-        //         console.info(geometry);
-        //         next(updateSensorGeometry(sensorId, geometry));
-        //     } catch (ex) {
-        //         console.error(ex);
-        //     }
-        // }
+        if (action.type === SENSOR_PATH_UPDATE && action.payload.path.length > 1) {
+            const { path, sensorId } = action.payload;
+            const result = await axios.get(`http://router.project-osrm.org/route/v1/driving/${path.map(way => `${way.lng},${way.lat}`).join(';')}?geometries=geojson`);
+            try {
+                const geometry = (result.data.routes[0].geometry.coordinates as any[]).map(([lng,lat]: [number,number]) => ({lng,lat}));
+                console.info(geometry);
+                next(updateSensorGeometry(sensorId, geometry));
+            } catch (ex) {
+                console.error(ex);
+            }
+        }
     }));
 (window as any).store = store;
 
