@@ -3,7 +3,7 @@ export const FILE_LOADED = 'FILE_LOADED';
 export const FILE_FAILED = 'FILE_FAILED';
 export const SENSOR_SELECTED = 'SENSOR_SELECTED';
 export const SENSOR_UNSELECTED = 'SENSOR_UNSELECTED';
-export const SENSOR_PATH_UPDATE = 'SENSOR_PATH_UPDATE';
+export const SENSOR_WAYPOINTS_UPDATE = 'SENSOR_WAYPOINTS_UPDATE';
 export const SENSOR_GEOMETRY_UPDATE = 'SENSOR_GEOMETRY_UPDATE';
 
 export interface Sensor {
@@ -11,7 +11,8 @@ export interface Sensor {
     description: string;
     position: LatLng;
     waypoints: LatLng[];
-    pathGeometry: LatLng[];
+    geometry: LatLng[];
+    approxDistanceMeters?: number;
 }
 
 export interface LatLng {
@@ -54,17 +55,17 @@ export function unselectSensor(): Action {
     };
 }
 
-export function updateSensorPath(sensorId: string, path: LatLng[]): Action {
+export function updateSensorWaypoints(sensorId: string, waypoints: LatLng[]): Action {
     return {
-        type: SENSOR_PATH_UPDATE,
-        payload: { sensorId, path },
+        type: SENSOR_WAYPOINTS_UPDATE,
+        payload: { sensorId, waypoints },
     };
 }
 
-export function updateSensorGeometry(sensorId: string, geometry: LatLng[]) : Action {
+export function updateSensorGeometry(sensorId: string, geometry: LatLng[], approxDistanceMeters: number): Action {
     return {
         type: SENSOR_GEOMETRY_UPDATE,
-        payload: { sensorId, geometry },
+        payload: { sensorId, geometry, approxDistanceMeters },
     };
 }
 
@@ -84,13 +85,14 @@ interface PayloadMap {
         sensorId: string;
     };
     [SENSOR_UNSELECTED]: null;
-    [SENSOR_PATH_UPDATE]: {
+    [SENSOR_WAYPOINTS_UPDATE]: {
         sensorId: string;
-        path: LatLng[];
+        waypoints: LatLng[];
     };
     [SENSOR_GEOMETRY_UPDATE]: {
         sensorId: string;
         geometry: LatLng[];
+        approxDistanceMeters: number;
     };
 }
 export type Action = ActionsOfPayloads<PayloadMap>

@@ -11,7 +11,7 @@ export interface RoutetaggerMapProps {
 
     sensorSelected(sensorId: string): void;
     sensorUnselected(): void;
-    sensorPathUpdate(sensorId: string, path: LatLng[]): void;
+    sensorWaypointsUpdate(sensorId: string, path: LatLng[]): void;
 }
 
 interface Sensor {
@@ -19,14 +19,14 @@ interface Sensor {
     description: string;
     position: LatLng;
     waypoints: LatLng[];
-    pathGeometry: LatLng[];
+    geometry: LatLng[];
 }
 
 export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
     <Map
         center={props.position}
         zoom={props.zoom}
-        onclick={props.selectedSensorId && ((event) => props.sensorPathUpdate(
+        onclick={props.selectedSensorId && ((event) => props.sensorWaypointsUpdate(
             props.selectedSensorId!,
             props.sensors.find(x => x.id === props.selectedSensorId)!.waypoints.concat({lat: event.latlng.lat, lng: event.latlng.lng})
             )) || undefined}
@@ -47,9 +47,11 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
             >
                 <Popup>{sensor.id} {sensor.description}</Popup>
             </Marker>,
-            sensor.pathGeometry.length > 1 ? <Polyline
+            sensor.geometry.length > 1 ? <Polyline
                 key={sensor.id + 'line'}
-                positions={sensor.pathGeometry}
+                positions={sensor.geometry}
+                color={sensor.id === props.selectedSensorId ? 'blue' : 'green'}
+                weight={sensor.id === props.selectedSensorId ? 12 : 3}
             /> : undefined,
             sensor.id === props.selectedSensorId ? sensor.waypoints.map((pos, index) => (
                 <Marker
@@ -57,8 +59,7 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
                     key={sensor.id + '.' + index}
                     position={pos}
                     draggable={true}
-                    // ondragend={(event) => props.sensorWaypointMoved(sensor.id, index, getLatLon(event.target.getLatLng()))}
-                    ondragend={(event) => props.sensorPathUpdate(
+                    ondragend={(event) => props.sensorWaypointsUpdate(
                         sensor.id,
                         sensor.waypoints.map((way, i) => i === index ? getLatLon(event.target.getLatLng()) : way)
                     )}

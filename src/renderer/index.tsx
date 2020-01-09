@@ -6,7 +6,20 @@ import { connect, Provider } from 'react-redux';
 import { reduceFile, FileState } from './store/reducers'
 import { RoutetaggerMap } from './pages/RoutetaggerMap'
 import { FILE_OPEN_CHANNEL } from '../common/constants';
-import { selectFile, Action, FILE_SELECTED, loadFileFailed, Sensor, loadFile, selectSensor, unselectSensor, LatLng, updateSensorPath, SENSOR_PATH_UPDATE, updateSensorGeometry } from './store/actions';
+import {
+    selectFile,
+    Action,
+    FILE_SELECTED,
+    loadFileFailed,
+    Sensor,
+    loadFile,
+    selectSensor,
+    unselectSensor,
+    LatLng,
+    updateSensorWaypoints,
+    SENSOR_WAYPOINTS_UPDATE,
+    updateSensorGeometry,
+} from './store/actions';
 import * as csv from 'csv-parser';
 import * as fs from 'fs';
 import axios from 'axios';
@@ -31,7 +44,7 @@ const store = createStore(
                                     lng: data.lng,
                                 },
                                 waypoints: [],
-                                pathGeometry: [],
+                                geometry: [],
                             });
                         })
                         .on('end', () => resolve(results));
@@ -41,13 +54,15 @@ const store = createStore(
                 next(loadFileFailed(action.payload.filename, ex.message));
             }
         }
-        if (action.type === SENSOR_PATH_UPDATE && action.payload.path.length > 1) {
-            const { path, sensorId } = action.payload;
+        if (action.type === SENSOR_WAYPOINTS_UPDATE && action.payload.waypoints.length > 1) {
+            const { waypoints: path, sensorId } = action.payload;
             const result = await axios.get(`http://router.project-osrm.org/route/v1/driving/${path.map(way => `${way.lng},${way.lat}`).join(';')}?geometries=geojson`);
             try {
-                const geometry = (result.data.routes[0].geometry.coordinates as any[]).map(([lng,lat]: [number,number]) => ({lng,lat}));
+                const route = result.data.routes[0];
+                const geometry = (route.geometry.coordinates as any[]).map(([lng,lat]: [number,number]) => ({lng,lat}));
+                const distanceMeters = route.distance;
                 console.info(geometry);
-                next(updateSensorGeometry(sensorId, geometry));
+                next(updateSensorGeometry(sensorId, geometry, distanceMeters));
             } catch (ex) {
                 console.error(ex);
             }
@@ -59,13 +74,7 @@ function mapStateToProps(state: FileState) {
     return {
         position: { lat:43.6532, lng:-79.3832 },
         zoom: 13,
-        sensors: Object.values(state.sensors).map(sensor => ({
-            id: sensor.id,
-            description: sensor.description,
-            position: sensor.position,
-            waypoints: sensor.waypoints,
-            pathGeometry: sensor.pathGeometry,
-        })),
+        sensors: Object.values(state.sensors),
         selectedSensorId: state.selectedSensorId,
     };
 }
@@ -74,7 +83,7 @@ function mapDispatchToProps(dispatch: typeof store.dispatch) {
     return {
         sensorSelected: (sensorId: string) => dispatch(selectSensor(sensorId)),
         sensorUnselected: () => dispatch(unselectSensor()),
-        sensorPathUpdate: (sensorId: string, path: LatLng[]) => dispatch(updateSensorPath(sensorId, path)),
+        sensorWaypointsUpdate: (sensorId: string, path: LatLng[]) => dispatch(updateSensorWaypoints(sensorId, path)),
     }
 }
 

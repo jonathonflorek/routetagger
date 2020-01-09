@@ -1,4 +1,14 @@
-import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED, SENSOR_SELECTED, SENSOR_UNSELECTED, SENSOR_PATH_UPDATE, SENSOR_GEOMETRY_UPDATE } from './actions';
+import {
+    Sensor,
+    Action,
+    FILE_SELECTED,
+    FILE_LOADED,
+    FILE_FAILED,
+    SENSOR_SELECTED,
+    SENSOR_UNSELECTED,
+    SENSOR_WAYPOINTS_UPDATE,
+    SENSOR_GEOMETRY_UPDATE,
+} from './actions';
 
 export interface FileState {
     loadedFilename?: string;
@@ -49,8 +59,8 @@ export function reduceFile(state = initialFileState, action: Action): FileState 
             selectedSensorId: undefined,
         };
     }
-    if (action.type === SENSOR_PATH_UPDATE) {
-        const { sensorId, path } = action.payload;
+    if (action.type === SENSOR_WAYPOINTS_UPDATE) {
+        const { sensorId, waypoints: path } = action.payload;
         return {
             ...state,
             sensors: {
@@ -63,14 +73,15 @@ export function reduceFile(state = initialFileState, action: Action): FileState 
         };
     }
     if (action.type === SENSOR_GEOMETRY_UPDATE) {
-        const { sensorId, geometry } = action.payload;
+        const { sensorId, geometry, approxDistanceMeters } = action.payload;
         return {
             ...state,
             sensors: {
                 ...state.sensors,
                 [sensorId]: {
                     ...state.sensors[sensorId],
-                    pathGeometry: geometry,
+                    geometry: geometry,
+                    approxDistanceMeters,
                 },
             },
         };
