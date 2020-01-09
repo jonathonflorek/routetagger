@@ -3,11 +3,15 @@ export const FILE_LOADED = 'FILE_LOADED';
 export const FILE_FAILED = 'FILE_FAILED';
 export const SENSOR_SELECTED = 'SENSOR_SELECTED';
 export const SENSOR_UNSELECTED = 'SENSOR_UNSELECTED';
+export const SENSOR_WAYPOINT_PUSHED = 'SENSOR_WAYPOINT_PUSHED';
+export const SENSOR_WAYPOINT_POPPED = 'SENSOR_WAYPOINT_POPPED';
+export const SENSOR_WAYPOINT_MOVED = 'SENSOR_WAYPOINT_MOVED';
 
 export interface Sensor {
     id: string;
     description: string;
-    position: LatLon
+    position: LatLon;
+    waypoints: LatLon[];
 }
 
 export interface LatLon {
@@ -50,6 +54,27 @@ export function unselectSensor(): Action {
     };
 }
 
+export function popSensorWaypoint(sensorId: string): Action {
+    return {
+        type: SENSOR_WAYPOINT_POPPED,
+        payload: { sensorId },
+    };
+}
+
+export function pushSensorWaypoint(sensorId: string, location: LatLon): Action {
+    return {
+        type: SENSOR_WAYPOINT_PUSHED,
+        payload: { sensorId, location },
+    };
+}
+
+export function moveSensorWaypoint(sensorId: string, waypointIndex: number, location: LatLon): Action {
+    return {
+        type: SENSOR_WAYPOINT_MOVED,
+        payload: { sensorId, waypointIndex, location },
+    };
+}
+
 interface PayloadMap {
     [FILE_SELECTED]: {
         filename: string;
@@ -64,8 +89,20 @@ interface PayloadMap {
     };
     [SENSOR_SELECTED]: {
         sensorId: string;
-    }
+    };
     [SENSOR_UNSELECTED]: null;
+    [SENSOR_WAYPOINT_POPPED]: {
+        sensorId: string;
+    };
+    [SENSOR_WAYPOINT_PUSHED]: {
+        sensorId: string;
+        location: LatLon;
+    };
+    [SENSOR_WAYPOINT_MOVED]: {
+        sensorId: string;
+        waypointIndex: number;
+        location: LatLon;
+    }
 }
 export type Action = ActionsOfPayloads<PayloadMap>
 

@@ -1,4 +1,4 @@
-import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED, SENSOR_SELECTED, SENSOR_UNSELECTED } from './actions';
+import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED, SENSOR_SELECTED, SENSOR_UNSELECTED, SENSOR_WAYPOINT_PUSHED, SENSOR_WAYPOINT_POPPED, SENSOR_WAYPOINT_MOVED } from './actions';
 
 export interface FileState {
     loadedFilename?: string;
@@ -47,6 +47,47 @@ export function reduceFile(state = initialFileState, action: Action): FileState 
         return {
             ...state,
             selectedSensorId: undefined,
+        };
+    }
+    if (action.type === SENSOR_WAYPOINT_PUSHED) {
+        const { sensorId, location } = action.payload;
+        return {
+            ...state,
+            sensors: {
+                ...state.sensors,
+                [sensorId]: {
+                    ...state.sensors[sensorId],
+                    waypoints: [...state.sensors[sensorId].waypoints, location],
+                },
+            },
+        };
+    }
+    if (action.type === SENSOR_WAYPOINT_POPPED) {
+        const { sensorId } = action.payload;
+        const oldWaypoints = state.sensors[sensorId].waypoints;
+        return {
+            ...state,
+            sensors: {
+                ...state.sensors,
+                [sensorId]: {
+                    ...state.sensors[sensorId],
+                    waypoints: oldWaypoints.slice(0, oldWaypoints.length - 1),
+                },
+            },
+        };
+    }
+    if (action.type === SENSOR_WAYPOINT_MOVED) {
+        const { sensorId } = action.payload;
+        const oldWaypoints = state.sensors[sensorId].waypoints;
+        return {
+            ...state,
+            sensors: {
+                ...state.sensors,
+                [sensorId]: {
+                    ...state.sensors[sensorId],
+                    waypoints: oldWaypoints.map((waypoint, index) => index === action.payload.waypointIndex ? action.payload.location : waypoint),
+                },
+            },
         };
     }
     return state;

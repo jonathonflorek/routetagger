@@ -1,3 +1,5 @@
+/* based on https://stackoverflow.com/a/40870439 */
+
 .routetagger-pin {
     width: 3rem;
     height: 3rem;
@@ -24,4 +26,18 @@
 
 .routetagger-pin-default {
     background-color: grey;
+}
+
+.routetagger-pin-route-text {
+    color: white;
+    position: relative;
+    width: 3rem;
+    text-align: center;
+    display: inline-block;
+    font-size: 2rem;
+    transform: rotate(-45deg);
+}
+
+.routetagger-pin-route {
+    background-color: black;
 }

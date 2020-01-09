@@ -6,7 +6,7 @@ import { connect, Provider } from 'react-redux';
 import { reduceFile, FileState } from './store/reducers'
 import { RoutetaggerMap } from './pages/RoutetaggerMap'
 import { FILE_OPEN_CHANNEL } from '../common/constants';
-import { selectFile, Action, FILE_SELECTED, loadFileFailed, Sensor, loadFile, selectSensor, unselectSensor } from './store/actions';
+import { selectFile, Action, FILE_SELECTED, loadFileFailed, Sensor, loadFile, selectSensor, unselectSensor, LatLon, pushSensorWaypoint, moveSensorWaypoint } from './store/actions';
 import * as csv from 'csv-parser';
 import * as fs from 'fs';
 
@@ -29,6 +29,7 @@ const store = createStore(
                                     lat: data.lat,
                                     lon: data.lng,
                                 },
+                                waypoints: [],
                             });
                         })
                         .on('end', () => resolve(results));
@@ -48,7 +49,8 @@ function mapStateToProps(state: FileState) {
         sensors: Object.values(state.sensors).map(sensor => ({
             id: sensor.id,
             description: sensor.description,
-            position: [sensor.position.lat, sensor.position.lon] as [number, number],
+            position: toPosition(sensor.position),
+            waypoints: sensor.waypoints.map(toPosition),
         })),
         selectedSensorId: state.selectedSensorId,
     };
@@ -58,7 +60,13 @@ function mapDispatchToProps(dispatch: typeof store.dispatch) {
     return {
         sensorSelected: (sensorId: string) => dispatch(selectSensor(sensorId)),
         sensorUnselected: () => dispatch(unselectSensor()),
+        sensorWaypointAdded: (sensorId: string, latlon: LatLon) => dispatch(pushSensorWaypoint(sensorId, latlon)),
+        sensorWaypointMoved: (sensorId: string, index: number, latlon: LatLon) => dispatch(moveSensorWaypoint(sensorId, index, latlon)),
     }
+}
+
+function toPosition({lat, lon}: {lat: number, lon: number}) {
+    return [lat, lon] as [number, number];
 }
 
 const Root = connect(mapStateToProps, mapDispatchToProps)(RoutetaggerMap);
