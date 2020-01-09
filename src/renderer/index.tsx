@@ -54,17 +54,21 @@ const store = createStore(
                 next(loadFileFailed(action.payload.filename, ex.message));
             }
         }
-        if (action.type === SENSOR_WAYPOINTS_UPDATE && action.payload.waypoints.length > 1) {
+        if (action.type === SENSOR_WAYPOINTS_UPDATE) {
             const { waypoints: path, sensorId } = action.payload;
-            const result = await axios.get(`http://router.project-osrm.org/route/v1/driving/${path.map(way => `${way.lng},${way.lat}`).join(';')}?geometries=geojson`);
-            try {
-                const route = result.data.routes[0];
-                const geometry = (route.geometry.coordinates as any[]).map(([lng,lat]: [number,number]) => ({lng,lat}));
-                const distanceMeters = route.distance;
-                console.info(geometry);
-                next(updateSensorGeometry(sensorId, geometry, distanceMeters));
-            } catch (ex) {
-                console.error(ex);
+            if (action.payload.waypoints.length > 1) {
+                const result = await axios.get(`http://router.project-osrm.org/route/v1/driving/${path.map(way => `${way.lng},${way.lat}`).join(';')}?geometries=geojson`);
+                try {
+                    const route = result.data.routes[0];
+                    const geometry = (route.geometry.coordinates as any[]).map(([lng,lat]: [number,number]) => ({lng,lat}));
+                    const distanceMeters = route.distance;
+                    console.info(geometry);
+                    next(updateSensorGeometry(sensorId, geometry, distanceMeters));
+                } catch (ex) {
+                    console.error(ex);
+                }
+            } else {
+                next(updateSensorGeometry(sensorId, []))
             }
         }
     }));

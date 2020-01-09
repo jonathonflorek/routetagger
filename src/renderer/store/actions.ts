@@ -62,7 +62,7 @@ export function updateSensorWaypoints(sensorId: string, waypoints: LatLng[]): Ac
     };
 }
 
-export function updateSensorGeometry(sensorId: string, geometry: LatLng[], approxDistanceMeters: number): Action {
+export function updateSensorGeometry(sensorId: string, geometry: LatLng[], approxDistanceMeters?: number): Action {
     return {
         type: SENSOR_GEOMETRY_UPDATE,
         payload: { sensorId, geometry, approxDistanceMeters },
@@ -92,7 +92,7 @@ interface PayloadMap {
     [SENSOR_GEOMETRY_UPDATE]: {
         sensorId: string;
         geometry: LatLng[];
-        approxDistanceMeters: number;
+        approxDistanceMeters?: number;
     };
 }
 export type Action = ActionsOfPayloads<PayloadMap>

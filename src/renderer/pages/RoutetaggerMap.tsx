@@ -37,7 +37,7 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
         />
         {props.sensors.map(sensor => [
             <Marker
-                icon={getPinIcon(sensor.id === props.selectedSensorId ? 'done' : 'default')}
+                icon={getPinIcon(getSensorStatus(sensor, props.selectedSensorId))}
                 key={sensor.id}
                 position={sensor.position}
                 keyboard={true}
@@ -45,7 +45,7 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
                 onclick={sensor.id === props.selectedSensorId ? props.sensorUnselected : (() => props.sensorSelected(sensor.id))}
                 zIndexOffset={sensor.id === props.selectedSensorId ? 1 : 0}
             >
-                <Popup>{sensor.id} {sensor.description}</Popup>
+                <Popup closeButton={false} >{sensor.id} {sensor.description}</Popup>
             </Marker>,
             sensor.geometry.length > 1 ? <Polyline
                 key={sensor.id + 'line'}
@@ -63,6 +63,7 @@ export const RoutetaggerMap = (props: RoutetaggerMapProps) => (
                         sensor.id,
                         sensor.waypoints.map((way, i) => i === index ? getLatLon(event.target.getLatLng()) : way)
                     )}
+                    onclick={(_) => props.sensorWaypointsUpdate(sensor.id, sensor.waypoints.filter((_, i) => i !== index))}
                     keyboard={false}
                 />
             )) : undefined,
@@ -97,4 +98,17 @@ function getWaypointIcon(text: string) {
             </span>
         `
     })
+}
+
+function getSensorStatus(sensor: Sensor, selectedSensorId?: string): 'error' | 'done' | 'pending' | 'default' {
+    if (sensor.id === selectedSensorId) {
+        return 'pending';
+    }
+    if (sensor.waypoints.length === 0) {
+        return 'default';
+    }
+    if (sensor.waypoints.length === 1) {
+        return 'error';
+    }
+    return 'done';
 }
