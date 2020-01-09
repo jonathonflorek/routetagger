@@ -12,7 +12,7 @@ import * as fs from 'fs';
 
 const store = createStore(
     reduceFile,
-    applyMiddleware(store => next => async (action: Action) => {
+    applyMiddleware(_ => next => async (action: Action) => {
         next(action);
         if (action.type === FILE_SELECTED) {
             try {
