@@ -1,6 +1,8 @@
 export const FILE_SELECTED = 'FILE_SELECTED';
 export const FILE_LOADED = 'FILE_LOADED';
 export const FILE_FAILED = 'FILE_FAILED';
+export const SENSOR_SELECTED = 'SENSOR_SELECTED';
+export const SENSOR_UNSELECTED = 'SENSOR_UNSELECTED';
 
 export interface Sensor {
     id: string;
@@ -34,6 +36,20 @@ export function loadFileFailed(filename: string, reason: string): Action {
     };
 }
 
+export function selectSensor(sensorId: string): Action {
+    return {
+        type: SENSOR_SELECTED,
+        payload: { sensorId },
+    };
+}
+
+export function unselectSensor(): Action {
+    return {
+        type: SENSOR_UNSELECTED,
+        payload: null,
+    };
+}
+
 interface PayloadMap {
     [FILE_SELECTED]: {
         filename: string;
@@ -46,6 +62,10 @@ interface PayloadMap {
         filename: string;
         reason: string;
     };
+    [SENSOR_SELECTED]: {
+        sensorId: string;
+    }
+    [SENSOR_UNSELECTED]: null;
 }
 export type Action = ActionsOfPayloads<PayloadMap>
 

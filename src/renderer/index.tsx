@@ -4,9 +4,9 @@ import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import { connect, Provider } from 'react-redux';
 import { reduceFile, FileState } from './store/reducers'
-import { RoutetaggerMap, MapProps } from './pages/RoutetaggerMap'
+import { RoutetaggerMap } from './pages/RoutetaggerMap'
 import { FILE_OPEN_CHANNEL } from '../common/constants';
-import { selectFile, Action, FILE_SELECTED, loadFileFailed, Sensor, loadFile } from './store/actions';
+import { selectFile, Action, FILE_SELECTED, loadFileFailed, Sensor, loadFile, selectSensor, unselectSensor } from './store/actions';
 import * as csv from 'csv-parser';
 import * as fs from 'fs';
 
@@ -41,19 +41,27 @@ const store = createStore(
     }));
 (window as any).store = store;
 
-function mapStateToProps(state: FileState): MapProps {
+function mapStateToProps(state: FileState) {
     return {
-        position: [43.6532, -79.3832],
+        position: [43.6532, -79.3832] as [number, number],
         zoom: 13,
         sensors: Object.values(state.sensors).map(sensor => ({
             id: sensor.id,
             description: sensor.description,
-            position: [sensor.position.lat, sensor.position.lon],
+            position: [sensor.position.lat, sensor.position.lon] as [number, number],
         })),
+        selectedSensorId: state.selectedSensorId,
     };
 }
 
-const Root = connect(mapStateToProps)(RoutetaggerMap);
+function mapDispatchToProps(dispatch: typeof store.dispatch) {
+    return {
+        sensorSelected: (sensorId: string) => dispatch(selectSensor(sensorId)),
+        sensorUnselected: () => dispatch(unselectSensor()),
+    }
+}
+
+const Root = connect(mapStateToProps, mapDispatchToProps)(RoutetaggerMap);
 
 const rootElement = document.getElementById('react-root');
 ReactDOM.render(

@@ -1,4 +1,4 @@
-import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED } from './actions';
+import { Sensor, Action, FILE_SELECTED, FILE_LOADED, FILE_FAILED, SENSOR_SELECTED, SENSOR_UNSELECTED } from './actions';
 
 export interface FileState {
     loadedFilename?: string;
@@ -7,6 +7,7 @@ export interface FileState {
         [sensorId: string]: Sensor;
     };
     error?: string;
+    selectedSensorId?: string;
 }
 
 const initialFileState: FileState = {
@@ -34,6 +35,18 @@ export function reduceFile(state = initialFileState, action: Action): FileState 
             loadedFilename: action.payload.filename,
             sensors: {},
             error: action.payload.reason,
+        };
+    }
+    if (action.type === SENSOR_SELECTED) {
+        return {
+            ...state,
+            selectedSensorId: action.payload.sensorId,
+        };
+    }
+    if (action.type === SENSOR_UNSELECTED) {
+        return {
+            ...state,
+            selectedSensorId: undefined,
         };
     }
     return state;

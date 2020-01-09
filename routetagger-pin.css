@@ -1,0 +1,27 @@
+.routetagger-pin {
+    width: 3rem;
+    height: 3rem;
+    display: block;
+    left: -1.5rem;
+    top: -1.5rem;
+    position: relative;
+    border-radius: 3rem 3rem 0;
+    transform: rotate(45deg);
+    border: 1px solid #FFFFFF;
+}
+
+.routetagger-pin-error {
+    background-color: red;
+}
+
+.routetagger-pin-done {
+    background-color: green;
+}
+
+.routetagger-pin-pending {
+    background-color: blue;
+}
+
+.routetagger-pin-default {
+    background-color: grey;
+}
