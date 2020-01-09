@@ -1,5 +1,6 @@
 export const FILE_SELECTED = 'FILE_SELECTED';
 export const FILE_LOADED = 'FILE_LOADED';
+export const FILE_FAILED = 'FILE_FAILED';
 
 export interface Sensor {
     id: string;
@@ -26,6 +27,13 @@ export function loadFile(filename: string, sensors: Sensor[]): Action {
     };
 }
 
+export function loadFileFailed(filename: string, reason: string): Action {
+    return {
+        type: FILE_FAILED,
+        payload: { filename, reason }
+    };
+}
+
 interface PayloadMap {
     [FILE_SELECTED]: {
         filename: string;
@@ -33,7 +41,11 @@ interface PayloadMap {
     [FILE_LOADED]: {
         filename: string;
         sensors: Sensor[];
-    }
+    };
+    [FILE_FAILED]: {
+        filename: string;
+        reason: string;
+    };
 }
 export type Action = ActionsOfPayloads<PayloadMap>
 

@@ -49,6 +49,10 @@ const menu = Menu.buildFromTemplate([
                     }
                 }
             },
+            {
+                label: 'Devtools',
+                role: 'toggleDevTools',
+            }
         ],
     },
 ]);

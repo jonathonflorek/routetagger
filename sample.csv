@@ -1,0 +1,4 @@
+id,description,lat,lng
+"sample_sensor_id","sensor 1",43.6532,-79.3832
+"my_sensor","another sensor",43.6532,-79.3828
+"s3","the third sensor",43.6532,-79.3836

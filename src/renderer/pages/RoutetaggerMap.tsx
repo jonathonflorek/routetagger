@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Map, Marker, TileLayer, Popup } from 'react-leaflet';
 
-interface MapProps {
+export interface MapProps {
     position: Position;
     zoom: number;
     sensors: Sensor[];

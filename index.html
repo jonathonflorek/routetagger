@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- leaflet css -->
+        <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css"/>
+
+        <!-- our styling for the leaflet container -->
+        <style>
+            .leaflet-container {
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+
         <title>Routetagger</title>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
     </head>
-    <body>
-        <div id='react-root'></div>
+    <body style="margin: 0px;">
+        <div id='react-root' style="height: 100%; width: 100%; position: absolute;"></div>
 
         <!-- application entry point -->
         <script>require('./dist/renderer/index.js');</script>
