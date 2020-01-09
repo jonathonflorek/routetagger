@@ -12,7 +12,7 @@ const initialFileState: FileState = {
     sensors: {},
 };
 
-function reduceFile(state = initialFileState, action: Action): FileState {
+export function reduceFile(state = initialFileState, action: Action): FileState {
     if (action.type === FILE_SELECTED) {
         return {
             ...state,
