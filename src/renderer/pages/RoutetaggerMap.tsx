@@ -34,6 +34,7 @@ export const RoutetaggerMap = (props: MapProps) => (
                 keyboard={true}
                 riseOnHover={true}
                 onclick={() => props.sensorSelected(sensor.id)}
+                zIndexOffset={sensor.id === props.selectedSensorId ? 1 : 0}
             >
                 <Popup>{sensor.id} {sensor.description}</Popup>
             </Marker>
