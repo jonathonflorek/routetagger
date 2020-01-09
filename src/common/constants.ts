@@ -1,1 +1,1 @@
-export const fileOpenChannel = 'FILE_OPEN_CHANNEL';
+export const FILE_OPEN_CHANNEL = 'FILE_OPEN_CHANNEL';

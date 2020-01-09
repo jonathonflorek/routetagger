@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, dialog } from 'electron';
 import * as path from 'path'
-import { fileOpenChannel } from '../common/constants';
+import { FILE_OPEN_CHANNEL } from '../common/constants';
 
 const isMac = process.platform === 'darwin';
 const mainUrl = 'file:///' + path.join(__dirname, '../../index.html');
@@ -45,7 +45,7 @@ const menu = Menu.buildFromTemplate([
                         properties: ['openFile'],
                     });
                     if (!pickedFile.canceled) {
-                        browserWindow.webContents.send(fileOpenChannel, pickedFile.filePaths[0]);
+                        browserWindow.webContents.send(FILE_OPEN_CHANNEL, pickedFile.filePaths[0]);
                     }
                 }
             },

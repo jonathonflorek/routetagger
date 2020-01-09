@@ -5,7 +5,7 @@ import * as React from 'react';
 import { connect, Provider } from 'react-redux';
 import { reduceFile, FileState } from './store/reducers'
 import { RoutetaggerMap, MapProps } from './pages/RoutetaggerMap'
-import { fileOpenChannel } from '../common/constants';
+import { FILE_OPEN_CHANNEL } from '../common/constants';
 import { selectFile, Action, FILE_SELECTED, loadFileFailed, Sensor, loadFile } from './store/actions';
 import * as csv from 'csv-parser';
 import * as fs from 'fs';
@@ -62,4 +62,4 @@ ReactDOM.render(
     </Provider>,
     rootElement);
 
-ipcRenderer.on(fileOpenChannel, (_, fileName: string) => store.dispatch(selectFile(fileName)));
+ipcRenderer.on(FILE_OPEN_CHANNEL, (_, fileName: string) => store.dispatch(selectFile(fileName)));
