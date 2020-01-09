@@ -1,5 +1,6 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu, dialog } from 'electron';
 import * as path from 'path'
+import { fileOpenChannel, fileSaveChannel } from '../common/constants';
 
 const isMac = process.platform === 'darwin';
 const mainUrl = 'file:///' + path.join(__dirname, '../../index.html');
@@ -32,3 +33,32 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
+
+const menu = Menu.buildFromTemplate([
+    {
+        label: 'File',
+        submenu: [
+            {
+                label: 'Open',
+                click: async (_, browserWindow) => {
+                    const pickedFile = await dialog.showOpenDialog(browserWindow, {
+                        properties: ['openFile'],
+                    });
+                    if (!pickedFile.canceled) {
+                        browserWindow.webContents.send(fileOpenChannel, pickedFile.filePaths[0]);
+                    }
+                }
+            },
+            {
+                label: 'Save',
+                click: async (_, browserWindow) => {
+                    const pickedFile = await dialog.showSaveDialog(browserWindow, {});
+                    if (!pickedFile.canceled) {
+                        browserWindow.webContents.send(fileSaveChannel, pickedFile.filePath);
+                    }
+                }
+            },
+        ],
+    },
+]);
+Menu.setApplicationMenu(menu);

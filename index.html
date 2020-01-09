@@ -7,10 +7,7 @@
     <body>
         <div id='react-root'></div>
 
-        <!-- fix for 'exports not defined' error on startup -->
-        <script>var exports = {};</script>
-
         <!-- application entry point -->
-        <script src="dist/renderer/index.js"></script>
+        <script>require('./dist/renderer/index.js');</script>
     </body>
 </html>

@@ -1,3 +1,7 @@
+export interface SensorsState {
+    [id: string]: Sensor | undefined;
+}
+
 export interface Sensor {
     id: string;
     name: string;
