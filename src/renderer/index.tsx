@@ -2,9 +2,8 @@ import { ipcRenderer } from 'electron'
 import { createStore, applyMiddleware } from 'redux';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import { connect, Provider } from 'react-redux';
-import { reduceFile, FileState } from './store/reducers';
-import { MapView } from './components/MapView';
+import { Provider } from 'react-redux';
+import { reduceFile } from './store/reducers';
 import { FILE_OPEN_CHANNEL } from '../common/constants';
 import {
     selectFile,
@@ -13,16 +12,13 @@ import {
     loadFileFailed,
     Sensor,
     loadFile,
-    selectSensor,
-    unselectSensor,
-    LatLng,
-    updateSensorWaypoints,
     SENSOR_WAYPOINTS_UPDATE,
     updateSensorGeometry,
 } from './store/actions';
 import * as csv from 'csv-parser';
 import * as fs from 'fs';
 import axios from 'axios';
+import { MapScreen } from './screens/mapScreen';
 
 const store = createStore(
     reduceFile,
@@ -74,28 +70,10 @@ const store = createStore(
     }));
 (window as any).store = store;
 
-function mapStateToProps(state: FileState) {
-    return {
-        position: { lat:43.6532, lng:-79.3832 },
-        zoom: 13,
-        sensors: state.sensors,
-        selectedSensorId: state.selectedSensorId,
-    };
-}
-
-function mapDispatchToProps(dispatch: typeof store.dispatch) {
-    return {
-        onSensorSelect: (sensorId: string | null) => dispatch(sensorId !== null ? selectSensor(sensorId) : unselectSensor()),
-        onWaypointsUpdated: (path: LatLng[], sensorId: string) => dispatch(updateSensorWaypoints(sensorId, path)),
-    }
-}
-
-const Root = connect(mapStateToProps, mapDispatchToProps)(MapView);
-
 const rootElement = document.getElementById('react-root');
 ReactDOM.render(
     <Provider store={store}>
-        <Root/>
+        <MapScreen/>
     </Provider>,
     rootElement);
 
