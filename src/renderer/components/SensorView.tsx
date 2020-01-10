@@ -18,14 +18,13 @@ interface SensorViewProps {
 
 export class SensorView extends React.PureComponent<SensorViewProps> {
     public render() {
-        const zIndexOffset = this.props.isSelected ? 1 : 0;
         const geometryLineColor = this.props.isSelected ? 'blue' : 'green';
         const geometryLineWeight = this.props.isSelected ? 12 : 3;
         return <>
             <Marker
                 icon={this.getSensorIcon()}
                 position={this.props.position}
-                zIndexOffset={zIndexOffset}
+                zIndexOffset={this.getZIndexOffset()}
                 onclick={this.onclick}
             >
                 <Popup closeButton={false} >{this.props.title}</Popup>
@@ -85,5 +84,16 @@ export class SensorView extends React.PureComponent<SensorViewProps> {
             return 'error';
         }
         return 'done';
+    }
+
+    private getZIndexOffset() {
+        const status = this.getStatus();
+        const statusZIndexMap = {
+            pending: 3,
+            error: 2,
+            default: 1,
+            done: 0,
+        };
+        return statusZIndexMap[status];
     }
 }
