@@ -7,67 +7,19 @@ import { reduceFile } from './store/reducers';
 import { FILE_OPEN_CHANNEL } from '../common/constants';
 import {
     selectFile,
-    Action,
-    FILE_SELECTED,
-    loadFileFailed,
-    Sensor,
-    loadFile,
-    SENSOR_WAYPOINTS_UPDATE,
-    updateSensorGeometry,
 } from './store/actions';
-import * as csv from 'csv-parser';
-import * as fs from 'fs';
-import axios from 'axios';
 import { MapScreen } from './screens/mapScreen';
+import { fileLoader } from './middleware/fileLoader';
+import { geometryMapper } from './middleware/geometryMapper';
 
 const store = createStore(
     reduceFile,
-    applyMiddleware(_ => next => async (action: Action) => {
-        next(action);
-        if (action.type === FILE_SELECTED) {
-            try {
-                const sensors = await new Promise<Sensor[]>((resolve, reject) => {
-                    const results: Sensor[] = [];
-                    fs.createReadStream(action.payload.filename)
-                        .pipe(csv())
-                        .on('error', reject)
-                        .on('data', (data) => {
-                            results.push({
-                                id: data.id,
-                                description: data.description,
-                                position: {
-                                    lat: data.lat,
-                                    lng: data.lng,
-                                },
-                                waypoints: [],
-                                geometry: [],
-                            });
-                        })
-                        .on('end', () => resolve(results));
-                });
-                next(loadFile(action.payload.filename, sensors));
-            } catch (ex) {
-                next(loadFileFailed(action.payload.filename, ex.message));
-            }
-        }
-        if (action.type === SENSOR_WAYPOINTS_UPDATE) {
-            const { waypoints: path, sensorId } = action.payload;
-            if (action.payload.waypoints.length > 1) {
-                const result = await axios.get(`http://router.project-osrm.org/route/v1/driving/${path.map(way => `${way.lng},${way.lat}`).join(';')}?geometries=geojson`);
-                try {
-                    const route = result.data.routes[0];
-                    const geometry = (route.geometry.coordinates as any[]).map(([lng,lat]: [number,number]) => ({lng,lat}));
-                    const distanceMeters = route.distance;
-                    console.info(geometry);
-                    next(updateSensorGeometry(sensorId, geometry, distanceMeters));
-                } catch (ex) {
-                    console.error(ex);
-                }
-            } else {
-                next(updateSensorGeometry(sensorId, []))
-            }
-        }
-    }));
+    applyMiddleware(
+        fileLoader,
+        geometryMapper({
+            osrmUrl: 'http://router.project-osrm.org',
+        }),
+    ));
 (window as any).store = store;
 
 const rootElement = document.getElementById('react-root');
