@@ -6,8 +6,10 @@ import { selectSensor, unselectSensor, LatLng, updateSensorWaypoints } from '../
 
 function mapStateToProps(state: FileState) {
     return {
+        // default position over toronto
         position: { lat:43.6532, lng:-79.3832 },
         zoom: 13,
+
         sensors: state.sensors,
         selectedSensorId: state.selectedSensorId,
     };

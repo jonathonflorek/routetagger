@@ -13,7 +13,7 @@ const store = createStore(
     applyMiddleware(
         fileLoader,
         geometryMapper({
-            osrmUrl: 'http://router.project-osrm.org',
+            osrmUrl: 'http://localhost:5000',
         }),
     ));
 (window as any).store = store;
