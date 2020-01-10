@@ -1,6 +1,7 @@
 export const FILE_SELECTED = 'FILE_SELECTED';
 export const FILE_LOADED = 'FILE_LOADED';
 export const FILE_FAILED = 'FILE_FAILED';
+export const FILE_SAVE = 'FILE_SAVE';
 export const SENSOR_SELECTED = 'SENSOR_SELECTED';
 export const SENSOR_UNSELECTED = 'SENSOR_UNSELECTED';
 export const SENSOR_WAYPOINTS_UPDATE = 'SENSOR_WAYPOINTS_UPDATE';
@@ -69,6 +70,13 @@ export function updateSensorGeometry(sensorId: string, geometry: LatLng[], appro
     };
 }
 
+export function saveFile(): Action {
+    return {
+        type: FILE_SAVE,
+        payload: null,
+    };
+}
+
 interface PayloadMap {
     [FILE_SELECTED]: {
         filename: string;
@@ -94,6 +102,7 @@ interface PayloadMap {
         geometry: LatLng[];
         approxDistanceMeters?: number;
     };
+    [FILE_SAVE]: null;
 }
 export type Action = ActionsOfPayloads<PayloadMap>
 

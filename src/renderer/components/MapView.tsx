@@ -37,6 +37,7 @@ export class MapView extends React.PureComponent<MapViewProps> {
                 />
                 {Object.values(this.props.sensors).map(sensor => (
                     <SensorView
+                        key={sensor.id}
                         id={sensor.id}
                         isSelected={sensor.id === this.props.selectedSensorId}
                         title={sensor.id + ' ' + sensor.description}

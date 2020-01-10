@@ -37,6 +37,7 @@ export class SensorView extends React.PureComponent<SensorViewProps> {
             /> : undefined}
             {this.props.isSelected ? this.props.waypointPositions.map((position, index) => (
                 <SensorWaypointView
+                    key={index}
                     index={index}
                     position={position}
 
