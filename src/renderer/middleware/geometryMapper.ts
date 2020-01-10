@@ -15,10 +15,15 @@ export function geometryMapper({ osrmUrl }: GeometryMapperConfig): Middleware {
             if (waypoints.length > 1) {
                 const waypointsString = waypoints.map(w => w.lng + ',' + w.lat).join(';');
                 const requestUrl = `${osrmUrl}/route/v1/driving/${waypointsString}?geometries=geojson`;
-                const result = await axios.get(requestUrl);
-                const route = result.data.routes[0];
-                const geometry = (route.geometry.coordinates as any[]).map(([lng, lat]) => ({lng, lat}));
-                next(updateSensorGeometry(sensorId, geometry, route.distance));
+                try {
+                    const result = await axios.get(requestUrl);
+                    const route = result.data.routes[0];
+                    const geometry = (route.geometry.coordinates as any[]).map(([lng, lat]) => ({lng, lat}));
+                    next(updateSensorGeometry(sensorId, geometry, route.distance));
+                } catch (ex) {
+                    console.error(ex);
+                    alert('could not connect to OSRM: ' + ex)
+                }
             } else {
                 // clear sensor geometry because anything <2 waypoints is not a valid line
                 next(updateSensorGeometry(sensorId, []));
