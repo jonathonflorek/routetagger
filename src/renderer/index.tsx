@@ -3,8 +3,8 @@ import { createStore, applyMiddleware } from 'redux';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import { connect, Provider } from 'react-redux';
-import { reduceFile, FileState } from './store/reducers'
-import { RoutetaggerMap } from './pages/RoutetaggerMap'
+import { reduceFile, FileState } from './store/reducers';
+import { MapView } from './components/MapView';
 import { FILE_OPEN_CHANNEL } from '../common/constants';
 import {
     selectFile,
@@ -85,13 +85,12 @@ function mapStateToProps(state: FileState) {
 
 function mapDispatchToProps(dispatch: typeof store.dispatch) {
     return {
-        sensorSelected: (sensorId: string) => dispatch(selectSensor(sensorId)),
-        sensorUnselected: () => dispatch(unselectSensor()),
-        sensorWaypointsUpdate: (sensorId: string, path: LatLng[]) => dispatch(updateSensorWaypoints(sensorId, path)),
+        onSensorSelect: (sensorId: string | null) => dispatch(sensorId !== null ? selectSensor(sensorId) : unselectSensor()),
+        onWaypointsUpdated: (path: LatLng[], sensorId: string) => dispatch(updateSensorWaypoints(sensorId, path)),
     }
 }
 
-const Root = connect(mapStateToProps, mapDispatchToProps)(RoutetaggerMap);
+const Root = connect(mapStateToProps, mapDispatchToProps)(MapView);
 
 const rootElement = document.getElementById('react-root');
 ReactDOM.render(
