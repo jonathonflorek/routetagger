@@ -54,7 +54,14 @@ export class MapView extends React.PureComponent<MapViewProps> {
 
     private onclick = (event: LeafletMouseEvent) => {
         if (this.props.selectedSensorId !== undefined) {
-            const newWaypoints = this.props.sensors[this.props.selectedSensorId].waypoints.concat(event.latlng);
+            const oldWaypoints = this.props.sensors[this.props.selectedSensorId].waypoints;
+
+            // max 2 endpoints
+            if (oldWaypoints.length > 1) {
+                return;
+            }
+
+            const newWaypoints = oldWaypoints.concat(event.latlng);
             this.props.onWaypointsUpdated(newWaypoints, this.props.selectedSensorId);
         }
     }
