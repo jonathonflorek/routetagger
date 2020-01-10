@@ -78,7 +78,7 @@ function mapStateToProps(state: FileState) {
     return {
         position: { lat:43.6532, lng:-79.3832 },
         zoom: 13,
-        sensors: Object.values(state.sensors),
+        sensors: state.sensors,
         selectedSensorId: state.selectedSensorId,
     };
 }
